@@ -1193,6 +1193,7 @@ input[type="datetime-local"]:focus {
 }
 
 
+
 /* --- MOBILE RESPONSIVENESS INJECTED --- */
 @media (max-width: 768px) {
     /* Login & Register Boxes */
@@ -1217,6 +1218,8 @@ input[type="datetime-local"]:focus {
         border-bottom: 1px solid var(--border);
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         z-index: 100;
+        display: flex;
+        flex-direction: column;
     }
     
     .dashboard-main {
@@ -1249,7 +1252,7 @@ input[type="datetime-local"]:focus {
         flex-wrap: wrap;
         gap: 10px;
         margin-bottom: 10px;
-        justify-content: space-between;
+        justify-content: center;
     }
     
     .nav-item {
@@ -1259,27 +1262,67 @@ input[type="datetime-local"]:focus {
         font-size: 14px;
     }
     
-    /* Hide some text if too tight, or keep it */
+    /* Profile and Settings in Top Left */
     .sidebar-header {
         margin-bottom: 15px;
         text-align: center;
     }
     
-    .sidebar-footer {
-        padding-top: 15px;
-        flex-direction: row;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .sidebar-footer .user-info {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        margin: 0;
+        padding: 0;
     }
     
-    .user-info {
-        margin-bottom: 0;
+    .sidebar-footer .user-details {
+        display: none; /* Hide text to save space */
+    }
+    
+    .sidebar-footer .user-avatar {
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+    }
+    
+    /* Position Settings Button next to Avatar */
+    #settingsBtn {
+        position: absolute;
+        top: 15px;
+        left: 60px;
+        padding: 8px;
+        background: transparent !important;
+        color: var(--text-secondary);
+        width: auto;
+        flex: none;
+    }
+    
+    #settingsBtn:hover {
+        color: var(--primary);
+    }
+    
+    #settingsBtn span {
+        display: none; /* Hide text */
+    }
+    
+    #settingsBtn svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    /* Adjust Footer */
+    .sidebar-footer {
+        padding-top: 15px;
+        display: flex;
+        justify-content: center; /* Center the logout button since user info is absolute */
+        align-items: center;
+        border-top: 1px solid var(--border);
     }
     
     .sidebar-footer .logout-btn {
         width: auto;
-        padding: 8px 15px;
+        padding: 8px 20px;
     }
     
     /* Tables */
@@ -1310,7 +1353,7 @@ input[type="datetime-local"]:focus {
     }
     
     .nav-links {
-        display: flex !important; /* Override if it was hidden in index */
+        display: flex !important;
         flex-wrap: wrap;
         justify-content: center;
     }
