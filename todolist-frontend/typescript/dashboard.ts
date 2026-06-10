@@ -27,6 +27,7 @@ class Dashboard {
     this.initializeEventListeners();
     this.loadUserInfo();
     this.loadTasks();
+    this.checkNotifications();
   }
 
   private initializeEventListeners(): void {
@@ -185,6 +186,27 @@ class Dashboard {
       }
     } catch (error) {
       console.error("Error loading tasks:", error);
+    }
+  }
+
+  private async checkNotifications(): Promise<void> {
+    try {
+      const response = await fetch("/api/client/notifications", {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.flaggedTasks && data.flaggedTasks.length > 0) {
+          data.flaggedTasks.forEach((task: any) => {
+            alert(`A tarefa "${task.titulo}" foi ocultada do seu painel por violar as diretrizes de conteúdo.`);
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error checking notifications:", error);
     }
   }
 

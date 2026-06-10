@@ -15,10 +15,39 @@ router.get('/todos', async (req: AuthRequest, res: Response) => {
   try {
     const todoRepository = AppDataSource.getRepository(Todo);
     const todos = await todoRepository.find({
-      where: { client: { id: req.userId } },
+      where: { 
+        client: { id: req.userId },
+        isFlagged: false,
+        isDeleted: false
+      },
       relations: ['client']
     });
     res.json(todos);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get notifications
+router.get('/notifications', async (req: AuthRequest, res: Response) => {
+  try {
+    const todoRepository = AppDataSource.getRepository(Todo);
+    const unnotifiedFlagged = await todoRepository.find({
+      where: { 
+        client: { id: req.userId }, 
+        isFlagged: true, 
+        isFlaggedNotified: false 
+      }
+    });
+
+    if (unnotifiedFlagged.length > 0) {
+      for (let todo of unnotifiedFlagged) {
+        todo.isFlaggedNotified = true;
+      }
+      await todoRepository.save(unnotifiedFlagged);
+    }
+    
+    res.json({ flaggedTasks: unnotifiedFlagged });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

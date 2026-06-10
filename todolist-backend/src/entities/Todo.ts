@@ -57,6 +57,9 @@ export class Todo {
   @Column({ default: false })
   isFlagged!: boolean;
 
+  @Column({ default: false })
+  isFlaggedNotified!: boolean;
+
   @ManyToOne(() => Admin, (admin) => admin.todos, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn()
   admin!: Admin;
