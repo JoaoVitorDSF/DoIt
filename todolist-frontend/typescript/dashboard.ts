@@ -1,5 +1,7 @@
 // Dashboard TypeScript
 
+declare const Cropper: any;
+
 interface Task {
   id: number;
   titulo: string;
@@ -13,6 +15,7 @@ class Dashboard {
   private tasks: Task[] = [];
   private token: string | null = null;
   private selectedProfileImage: string | null = null;
+  private cropper: any = null;
 
   constructor() {
     this.token = localStorage.getItem("token");
@@ -84,6 +87,12 @@ class Dashboard {
     removeProfileImageBtn?.addEventListener("click", () =>
       this.handleRemoveProfileImage(),
     );
+
+    const confirmCropBtn = document.getElementById("confirmCropBtn");
+    const cancelCropBtn = document.getElementById("cancelCropBtn");
+
+    confirmCropBtn?.addEventListener("click", () => this.handleConfirmCrop());
+    cancelCropBtn?.addEventListener("click", () => this.handleCancelCrop());
 
     // Logout
     const logoutBtn = document.getElementById("logoutBtn");
@@ -376,22 +385,61 @@ class Dashboard {
       const reader = new FileReader();
       reader.onload = (event) => {
         const base64 = event.target?.result as string;
-        this.selectedProfileImage = base64;
+        
+        const cropperContainer = document.getElementById("cropperContainer");
+        const cropperImage = document.getElementById("cropperImage") as HTMLImageElement;
+        const profileImagePreview = document.getElementById("profileImagePreview");
 
-        // Show preview
-        const profileImagePreview = document.getElementById(
-          "profileImagePreview",
-        );
-        const previewImg = document.getElementById(
-          "previewImg",
-        ) as HTMLImageElement;
-        if (profileImagePreview && previewImg) {
-          previewImg.src = base64;
-          profileImagePreview.style.display = "block";
+        if (cropperContainer && cropperImage) {
+          cropperImage.src = base64;
+          cropperContainer.style.display = "block";
+          if (profileImagePreview) profileImagePreview.style.display = "none";
+          
+          if (this.cropper) {
+            this.cropper.destroy();
+          }
+          
+          this.cropper = new Cropper(cropperImage, {
+            aspectRatio: 1,
+            viewMode: 1,
+          });
         }
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  private handleConfirmCrop(): void {
+    if (this.cropper) {
+      const canvas = this.cropper.getCroppedCanvas({
+        width: 200,
+        height: 200
+      });
+      this.selectedProfileImage = canvas.toDataURL("image/jpeg");
+      
+      const previewImg = document.getElementById("previewImg") as HTMLImageElement;
+      const profileImagePreview = document.getElementById("profileImagePreview");
+      const cropperContainer = document.getElementById("cropperContainer");
+      
+      if (previewImg) previewImg.src = this.selectedProfileImage!;
+      if (profileImagePreview) profileImagePreview.style.display = "block";
+      if (cropperContainer) cropperContainer.style.display = "none";
+      
+      this.cropper.destroy();
+      this.cropper = null;
+    }
+  }
+
+  private handleCancelCrop(): void {
+    if (this.cropper) {
+      this.cropper.destroy();
+      this.cropper = null;
+    }
+    const cropperContainer = document.getElementById("cropperContainer");
+    if (cropperContainer) cropperContainer.style.display = "none";
+    
+    const profileImageUpload = document.getElementById("profileImageUpload") as HTMLInputElement;
+    if (profileImageUpload) profileImageUpload.value = "";
   }
 
   private handleRemoveProfileImage(): void {
