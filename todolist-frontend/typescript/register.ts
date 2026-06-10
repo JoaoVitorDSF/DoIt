@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitButton.textContent = 'Cadastrando...';
             
             try {
-                const response = await fetch('http://localhost:3000/api/auth/client/register', {
+                const response = await fetch('/api/auth/client/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

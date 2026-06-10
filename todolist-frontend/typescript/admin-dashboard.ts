@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAdminProfile() {
         try {
-            const res = await fetch('http://localhost:3000/api/admin/profile', {
+            const res = await fetch('/api/admin/profile', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/api/admin/profile', {
+            const res = await fetch('/api/admin/profile', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- TAB: REPORTS ---
     async function loadReports() {
         try {
-            const res = await fetch('http://localhost:3000/api/admin/statistics/dashboard', {
+            const res = await fetch('/api/admin/statistics/dashboard', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let dailyChart: any = null;
     async function loadCharts() {
         try {
-            const res = await fetch('http://localhost:3000/api/admin/statistics/charts', {
+            const res = await fetch('/api/admin/statistics/charts', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allUsers: any[] = [];
     async function loadUsers() {
         try {
-            const res = await fetch('http://localhost:3000/api/admin/clients', {
+            const res = await fetch('/api/admin/clients', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             allUsers = await res.json();
@@ -309,25 +309,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     (window as any).toggleUserBlock = async (id: number) => {
         if (!confirm('Tem certeza que deseja alterar o status deste usuário?')) return;
-        await fetch(`http://localhost:3000/api/admin/clients/${id}/block`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/clients/${id}/block`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
         loadUsers();
     };
 
     (window as any).resetUserPassword = async (id: number) => {
         if (!confirm('Isso mudará a senha do usuário para "Mudar@123". Confirmar?')) return;
-        await fetch(`http://localhost:3000/api/admin/clients/${id}/reset-password`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/clients/${id}/reset-password`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
         alert('Senha resetada.');
     };
 
     (window as any).promoteUser = async (id: number) => {
         if (!confirm('Promover este usuário a Admin? Esta ação moverá os dados de tabela.')) return;
-        await fetch(`http://localhost:3000/api/admin/clients/${id}/promote`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/clients/${id}/promote`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
         loadUsers();
     };
 
     (window as any).deleteUser = async (id: number) => {
         if (!confirm('Excluir este usuário permanentemente?')) return;
-        await fetch(`http://localhost:3000/api/admin/clients/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/clients/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
         loadUsers();
     };
 
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let allTasks: any[] = [];
     async function loadTasks() {
         try {
-            const res = await fetch('http://localhost:3000/api/admin/todos', {
+            const res = await fetch('/api/admin/todos', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             allTasks = await res.json();
@@ -386,17 +386,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     (window as any).softDeleteTask = async (id: number) => {
         if (!confirm('Mover tarefa para a lixeira?')) return;
-        await fetch(`http://localhost:3000/api/admin/todos/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/todos/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }});
         loadTasks();
     };
 
     (window as any).restoreTask = async (id: number) => {
-        await fetch(`http://localhost:3000/api/admin/todos/${id}/restore`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/todos/${id}/restore`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
         loadTasks();
     };
 
     (window as any).flagTask = async (id: number) => {
-        await fetch(`http://localhost:3000/api/admin/todos/${id}/flag`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
+        await fetch(`/api/admin/todos/${id}/flag`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` }});
         loadTasks();
     };
 

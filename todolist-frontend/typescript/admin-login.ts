@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             try {
                 // Try admin login
-                let response = await fetch('http://localhost:3000/api/auth/admin/login', {
+                let response = await fetch('/api/auth/admin/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

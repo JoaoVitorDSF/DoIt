@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             try {
                 // Try client login first
-                let response = await fetch('http://localhost:3000/api/auth/client/login', {
+                let response = await fetch('/api/auth/client/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (!response.ok) {
                     // If client login fails, try admin login
-                    response = await fetch('http://localhost:3000/api/auth/admin/login', {
+                    response = await fetch('/api/auth/admin/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
