@@ -1,0 +1,12 @@
+{
+  "name": "todolist-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for ToDoList application",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.3"
+  }
+}
