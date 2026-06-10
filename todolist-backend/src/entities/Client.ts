@@ -39,7 +39,7 @@ export class Client {
   @Column({ default: false })
   isBlocked!: boolean;
 
-  @Column({ nullable: true, type: 'datetime' })
+  @Column({ nullable: true })
   lastLoginAt!: Date | null;
 
   @OneToMany(() => Todo, (todo) => todo.client)
