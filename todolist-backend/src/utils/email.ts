@@ -10,7 +10,9 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
-  const verificationUrl = `http://localhost:3000/api/auth/confirm/${token}`;
+  // In a real app, this should be an environment variable like process.env.FRONTEND_URL
+  const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const verificationUrl = `${baseUrl}/api/auth/confirm/${token}`;
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
