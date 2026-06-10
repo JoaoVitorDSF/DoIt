@@ -6,6 +6,7 @@ import { Client } from '../entities/Client';
 import { Todo, TodoStatus } from '../entities/Todo';
 import { authenticateToken, requireAdmin, AuthRequest } from '../middleware/auth';
 import { hashPassword } from '../utils/password';
+import { MoreThanOrEqual } from 'typeorm';
 
 const router = Router();
 
@@ -268,25 +269,19 @@ router.get('/statistics/dashboard', async (req: AuthRequest, res: Response) => {
     const completionRate = totalTasks > 0 ? ((completedTasks / totalTasks) * 100).toFixed(2) + '%' : '0%';
 
     // Most active users (by number of tasks)
-    const activeUsers = await clientRepository.createQueryBuilder('client')
-      .leftJoinAndSelect('client.todos', 'todo')
-      .select(['client.id', 'client.nome', 'client.sobrenome'])
-      .addSelect('COUNT(todo.id)', 'taskCount')
-      .groupBy('client.id')
-      .orderBy('taskCount', 'DESC')
-      .limit(5)
-      .getRawMany();
+    const clients = await clientRepository.find({ relations: ['todos'] });
+    const activeUsers = clients.map(client => ({
+        id: client.id,
+        nome: `${client.nome} ${client.sobrenome}`,
+        taskCount: client.todos ? client.todos.length : 0
+    })).sort((a, b) => b.taskCount - a.taskCount).slice(0, 5);
 
     res.json({
       totalUsers,
       totalTasks,
       completedTasks,
       completionRate,
-      activeUsers: activeUsers.map(u => ({
-        id: u.client_id,
-        nome: `${u.client_nome} ${u.client_sobrenome}`,
-        taskCount: parseInt(u.taskCount)
-      }))
+      activeUsers
     });
   } catch (error) {
     console.error(error);
@@ -299,22 +294,36 @@ router.get('/statistics/charts', async (req: AuthRequest, res: Response) => {
     const todoRepository = AppDataSource.getRepository(Todo);
     
     // Get tasks grouped by creation date (last 7 days)
-    const dailyStats = await todoRepository.createQueryBuilder('todo')
-      .select('DATE(todo.createdAt)', 'date')
-      .addSelect('COUNT(*)', 'count')
-      .where('todo.createdAt >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)')
-      .groupBy('DATE(todo.createdAt)')
-      .orderBy('date', 'ASC')
-      .getRawMany();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const todos = await todoRepository.find({
+        where: { createdAt: MoreThanOrEqual(sevenDaysAgo) }
+    });
+
+    const dailyMap = new Map<string, number>();
+    // initialize last 7 days with 0
+    for(let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dailyMap.set(d.toISOString().split('T')[0], 0);
+    }
+
+    todos.forEach(todo => {
+        const dateStr = todo.createdAt.toISOString().split('T')[0];
+        if (dailyMap.has(dateStr)) {
+            dailyMap.set(dateStr, dailyMap.get(dateStr)! + 1);
+        }
+    });
+
+    const dailyStats = Array.from(dailyMap.entries()).map(([date, count]) => ({ date, count }));
 
     // Blocked content metrics (Tasks flagged)
     const blockedCount = await todoRepository.count({ where: { isFlagged: true } });
 
     res.json({
-      dailyStats: dailyStats.map(stat => ({
-        date: stat.date,
-        count: parseInt(stat.count)
-      })),
+      dailyStats,
       blockedContentTotal: blockedCount
     });
   } catch (error) {
