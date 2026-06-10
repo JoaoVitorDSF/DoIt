@@ -42,13 +42,13 @@ export class Todo {
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamp' })
   completedAt!: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamp' })
   dataInicio!: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamp' })
   dataExpiracao!: Date | null;
 
   @Column({ default: false })
