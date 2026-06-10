@@ -71,11 +71,20 @@ const newMobileCSS = `
         padding: 10px;
         font-size: 14px;
     }
+
+    /* Hide useless Dashboard button on Client Mobile */
+    .sidebar-nav .nav-item:not([id="settingsBtn"]):not([data-tab]) {
+        display: none;
+    }
     
-    /* Profile and Settings in Top Left */
+    /* Profile in Top Left, Settings in Top Right */
     .sidebar-header {
         margin-bottom: 15px;
         text-align: center;
+        min-height: 45px; /* Ensure space for absolute items */
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .sidebar-footer .user-info {
@@ -91,16 +100,17 @@ const newMobileCSS = `
     }
     
     .sidebar-footer .user-avatar {
-        width: 35px;
-        height: 35px;
+        width: 50px;
+        height: 50px;
         cursor: pointer;
     }
     
-    /* Position Settings Button next to Avatar */
+    /* Position Settings Button Top Right */
     #settingsBtn {
         position: absolute;
         top: 15px;
-        left: 60px;
+        right: 15px;
+        left: auto;
         padding: 8px;
         background: transparent !important;
         color: var(--text-secondary);
@@ -117,15 +127,15 @@ const newMobileCSS = `
     }
     
     #settingsBtn svg {
-        width: 22px;
-        height: 22px;
+        width: 28px;
+        height: 28px;
     }
     
     /* Adjust Footer */
     .sidebar-footer {
         padding-top: 15px;
         display: flex;
-        justify-content: center; /* Center the logout button since user info is absolute */
+        justify-content: center; /* Center the logout button */
         align-items: center;
         border-top: 1px solid var(--border);
     }
